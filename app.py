@@ -6,6 +6,7 @@ from functools import wraps
 import requests
 from datetime import timedelta
 from dotenv import load_dotenv
+from groq import Groq
 
 load_dotenv()
 
@@ -21,9 +22,9 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # Admin password from env
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
 
-# XAI / Grok API
-XAI_API_KEY = os.environ.get("XAI_API_KEY", "")
-XAI_API_URL = "https://api.x.ai/v1/chat/completions"
+# Groq API
+GROQ_API_KEY = os.environ.get("XAI_API_KEY", "")
+client = Groq(api_key=GROQ_API_KEY)
 
 # ─── Auth helpers ────────────────────────────────────────────────────────────
 
@@ -251,30 +252,35 @@ def chat_api():
         return jsonify({"error": "No message"}), 400
 
     portfolio_context = build_portfolio_context()
-    system_prompt = f"""You are a helpful portfolio assistant for this developer. 
-Answer questions about their skills, projects, background, and contact details using the information below.
-Be friendly, concise, and professional. If you don't know something from the portfolio data, say so.
-
-PORTFOLIO DATA:
-{portfolio_context}"""
+    system_prompt = (
+        "You are a professional portfolio assistant.\n"
+        "Answer like a human, clean and natural.\n\n"
+        "Rules:\n"
+        "- Do NOT say 'based on data' or 'portfolio data'\n"
+        "- Do NOT dump raw data\n"
+        "- Keep answers short and clear\n"
+        "- Format nicely using bullet points if needed\n"
+        "- If asked about skills, list them cleanly\n"
+        "- If asked about projects, summarize top ones\n"
+        "- If answer not found, say: 'I don't have that information.'\n\n"
+        f"Portfolio Data:\n{portfolio_context}"
+    )
 
     messages = []
     for h in history[-10:]:
         messages.append({"role": h["role"], "content": h["content"]})
     messages.append({"role": "user", "content": user_message})
 
-    if not XAI_API_KEY:
+    if not GROQ_API_KEY:
         return jsonify({"reply": "Chatbot is not configured. Please add XAI_API_KEY to environment variables."}), 200
 
     try:
-        resp = requests.post(
-            XAI_API_URL,
-            headers={"Authorization": f"Bearer {XAI_API_KEY}", "Content-Type": "application/json"},
-            json={"model": "grok-3-latest", "messages": [{"role": "system", "content": system_prompt}] + messages, "max_tokens": 1024},
-            timeout=30
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "system", "content": system_prompt}] + messages,
+            max_completion_tokens=1024
         )
-        resp.raise_for_status()
-        reply = resp.json()["choices"][0]["message"]["content"]
+        reply = response.choices[0].message.content
         return jsonify({"reply": reply})
     except Exception as e:
         return jsonify({"reply": f"Sorry, I encountered an error: {str(e)}"}), 200
