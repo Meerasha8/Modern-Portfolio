@@ -278,7 +278,7 @@ def chat_api():
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "system", "content": system_prompt}] + messages,
-            max_completion_tokens=1024
+            max_tokens=1024
         )
         reply = response.choices[0].message.content
         return jsonify({"reply": reply})
