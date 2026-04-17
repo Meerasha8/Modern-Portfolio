@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-brand" id="nav-brand">Portfolio</div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#" data-page="home">Home</a></li>
+      <li><a href="#" data-page="about">About</a></li>
+      <li><a href="#" data-page="skills">Skills</a></li>
+      <li><a href="#" data-page="projects">Projects</a></li>
+      <li><a href="#" data-page="contact">Contact</a></li>
+      <li><a href="#" data-page="chat">AI Chat</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-admin-login" id="adminToggle">Admin</button>
+      <div class="admin-badge hidden" id="adminBadge">
+        <span>Admin</span>
+        <button id="logoutBtn">✕</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGES -->
+  <main id="app">
+    <!-- Home Page -->
+    <section class="page" id="page-home">
+      <div class="home-bg"></div>
+      <div class="home-content">
+        <div class="home-collab" id="home-collab">Open to Collaboration</div>
+        <h1 class="home-name" id="home-name">Your Name</h1>
+        <p class="home-title" id="home-title">Full Stack Developer</p>
+        <p class="home-tagline" id="home-tagline">Building things that matter.</p>
+        <div class="home-cta">
+          <button class="btn-primary" data-page="projects">View Work</button>
+          <button class="btn-outline" data-page="contact">Get in Touch</button>
+        </div>
+        <div class="home-scroll-hint">scroll ↓</div>
+      </div>
+      <button class="edit-fab hidden" id="home-edit-btn" title="Edit Home">✎</button>
+    </section>
+
+    <!-- About Page -->
+    <section class="page hidden" id="page-about">
+      <div class="page-header">
+        <span class="page-label">01 / about</span>
+        <h2>About Me</h2>
+      </div>
+      <div class="about-grid" id="about-grid">
+        <div class="about-img-wrap">
+          <img id="about-img" src="" alt="Profile" class="about-img shape-circle" />
+        </div>
+        <div class="about-text">
+          <p id="about-desc">Loading...</p>
+        </div>
+      </div>
+      <button class="edit-fab hidden" id="about-edit-btn" title="Edit About">✎</button>
+    </section>
+
+    <!-- Skills Page -->
+    <section class="page hidden" id="page-skills">
+      <div class="page-header">
+        <span class="page-label">02 / skills</span>
+        <h2>Skills & Expertise</h2>
+      </div>
+      <div class="skills-grid" id="skills-grid"></div>
+      <button class="add-fab hidden" id="skills-add-btn" title="Add Skill">+</button>
+    </section>
+
+    <!-- Projects Page -->
+    <section class="page hidden" id="page-projects">
+      <div class="page-header">
+        <span class="page-label">03 / projects</span>
+        <h2>Projects</h2>
+      </div>
+      <div class="projects-grid" id="projects-grid"></div>
+      <button class="add-fab hidden" id="projects-add-btn" title="Add Project">+</button>
+    </section>
+
+    <!-- Contact Page -->
+    <section class="page hidden" id="page-contact">
+      <div class="page-header">
+        <span class="page-label">04 / contact</span>
+        <h2>Get In Touch</h2>
+      </div>
+      <div class="contact-layout">
+        <div class="contact-info" id="contact-info">Loading...</div>
+        <div class="contact-links" id="contact-links"></div>
+      </div>
+      <button class="edit-fab hidden" id="contact-edit-btn" title="Edit Contact">✎</button>
+    </section>
+
+    <!-- Chat Page -->
+    <section class="page hidden" id="page-chat">
+      <div class="page-header">
+        <span class="page-label">05 / ai chat</span>
+        <h2>Ask Me Anything</h2>
+      </div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-welcome">
+            <div class="chat-avatar">✦</div>
+            <p>Hi! I'm an AI assistant trained on this portfolio. Ask me about projects, skills, experience, or anything else!</p>
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" placeholder="Ask about skills, projects, background…" autocomplete="off" />
+          <button id="chat-send" class="btn-primary">Send</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+  <!-- Login Modal -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal">
+      <h3>Admin Login</h3>
+      <input type="password" id="loginPassword" placeholder="Enter admin password" />
+      <div id="loginError" class="error-msg hidden">Incorrect password</div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="loginSubmit">Login</button>
+        <button class="btn-ghost" id="loginCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home Edit Modal -->
+  <div class="modal-overlay hidden" id="homeModal">
+    <div class="modal modal-wide">
+      <h3>Edit Home</h3>
+      <label>Name</label><input type="text" id="hm-name" />
+      <label>Title</label><input type="text" id="hm-title" />
+      <label>Tagline</label><input type="text" id="hm-tagline" />
+      <label>Collaboration Text</label><input type="text" id="hm-collab" />
+      <div class="modal-actions">
+        <button class="btn-primary" id="homeModalSave">Save</button>
+        <button class="btn-ghost" id="homeModalCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Edit Modal -->
+  <div class="modal-overlay hidden" id="aboutModal">
+    <div class="modal modal-wide">
+      <h3>Edit About</h3>
+      <label>Profile Image URL</label><input type="url" id="ab-img" placeholder="https://…" />
+      <label>Image Shape</label>
+      <select id="ab-shape">
+        <option value="circle">Circle</option>
+        <option value="rectangle">Rectangle (16:9)</option>
+        <option value="square">Square</option>
+        <option value="rounded">Rounded Rectangle</option>
+      </select>
+      <label>Description</label><textarea id="ab-desc" rows="6"></textarea>
+      <div class="modal-actions">
+        <button class="btn-primary" id="aboutModalSave">Save</button>
+        <button class="btn-ghost" id="aboutModalCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skill Modal -->
+  <div class="modal-overlay hidden" id="skillModal">
+    <div class="modal modal-wide">
+      <h3 id="skillModalTitle">Add Skill</h3>
+      <input type="hidden" id="sk-id" />
+      <label>Skill Name</label><input type="text" id="sk-name" />
+      <label>Image URL (1:1 square)</label><input type="url" id="sk-img" placeholder="https://…" />
+      <label>Description</label><textarea id="sk-desc" rows="4"></textarea>
+      <label>Certification (optional)</label><input type="text" id="sk-cert" />
+      <div class="modal-actions">
+        <button class="btn-primary" id="skillModalSave">Save</button>
+        <button class="btn-ghost" id="skillModalCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Modal -->
+  <div class="modal-overlay hidden" id="projectModal">
+    <div class="modal modal-wide">
+      <h3 id="projectModalTitle">Add Project</h3>
+      <input type="hidden" id="pr-id" />
+      <label>Project Title</label><input type="text" id="pr-title" />
+      <label>Image URL (16:9)</label><input type="url" id="pr-img" placeholder="https://…" />
+      <label>Description</label><textarea id="pr-desc" rows="4"></textarea>
+      <label>Tech Stack (comma-separated)</label><input type="text" id="pr-tech" placeholder="React, Node.js, PostgreSQL" />
+      <label>Live Link (optional)</label><input type="url" id="pr-live" placeholder="https://…" />
+      <label>GitHub Link (optional)</label><input type="url" id="pr-github" placeholder="https://github.com/…" />
+      <label>Demo Video Link (optional)</label><input type="url" id="pr-video" placeholder="https://…" />
+      <div class="modal-actions">
+        <button class="btn-primary" id="projectModalSave">Save</button>
+        <button class="btn-ghost" id="projectModalCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Edit Modal -->
+  <div class="modal-overlay hidden" id="contactModal">
+    <div class="modal modal-wide">
+      <h3>Edit Contact</h3>
+      <label>Email</label><input type="email" id="ct-email" />
+      <label>Phone</label><input type="tel" id="ct-phone" />
+      <label>Location</label><input type="text" id="ct-location" />
+      <label>LinkedIn URL</label><input type="url" id="ct-linkedin" />
+      <label>GitHub URL</label><input type="url" id="ct-github" />
+      <label>Twitter/X URL</label><input type="url" id="ct-twitter" />
+      <label>Website URL</label><input type="url" id="ct-website" />
+      <div class="modal-actions">
+        <button class="btn-primary" id="contactModalSave">Save</button>
+        <button class="btn-ghost" id="contactModalCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
